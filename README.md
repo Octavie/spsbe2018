@@ -6,11 +6,13 @@ PowerShell scripts:
 
 ## SPFx source project
 Sample HelloWorld webpart
+
 added gulp-environment.js to prepare package with different Name, ID per environment.
-More info: https://www.eliostruyf.com/gulp-task-to-change-environment-settings-in-sharepoint-framework-projects/
+
+More info: [https://www.eliostruyf.com/gulp-task-to-change-environment-settings-in-sharepoint-framework-projects/](https://www.eliostruyf.com/gulp-task-to-change-environment-settings-in-sharepoint-framework-projects/)
 
 ### Build options
-gulp clean
-gulp change-pkg-settings --env tst
-gulp bundle --ship
-gulp package-solution --ship
+- gulp clean
+- gulp change-pkg-settings --env tst
+- gulp bundle --ship
+- gulp package-solution --ship
