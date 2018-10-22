@@ -1,26 +1,16 @@
-## demo-oc-ha
+## SPSBE 2018 Demos
+PowerShell scripts:
+DEMO SPA ARM - Simple SPA sample based on ARM template deployment with Environment variable
+DEMO SPA GEO ARM - Simple Geo redundant SPA sample based on ARM template deployment with Environment variable
+DEMO SPFx Deployment - Simple SPFx package deployment and site provisioning with PNP PowerShell.
 
-This is where you include your WebPart documentation.
-
-### Building the code
-
-```bash
-git clone the repo
-npm i
-npm i -g gulp
-gulp
-```
-
-This package produces the following:
-
-* lib/* - intermediate-stage commonjs build artifacts
-* dist/* - the bundled script, along with other resources
-* deploy/* - all resources which should be uploaded to a CDN.
+## SPFx source project
+Sample HelloWorld webpart
+added gulp-environment.js to prepare package with different Name, ID per environment.
+More info: https://www.eliostruyf.com/gulp-task-to-change-environment-settings-in-sharepoint-framework-projects/
 
 ### Build options
-
-gulp clean - TODO
-gulp test - TODO
-gulp serve - TODO
-gulp bundle - TODO
-gulp package-solution - TODO
+gulp clean
+gulp change-pkg-settings --env tst
+gulp bundle --ship
+gulp package-solution --ship
