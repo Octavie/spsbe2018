@@ -1,0 +1,56 @@
+{
+  "environments": [
+    {
+      "environment": "default",
+      "id": "a3832334-a47b-491a-b6ee-7eb7f3135809",
+      "name": "spsbe2018",
+      "zip": "solution/spsbe2018.sppkg",
+      "cdn": "<!-- PATH TO CDN -->",
+      "entries": [
+        {
+          "id": "58f644e6-4623-4f1b-a4fe-18f016cd6c1f",
+          "location": "./src/webparts/helloWorld/HelloWorldWebPart.manifest.json"
+        }
+      ]
+    },
+    {
+      "environment": "TST",
+      "id": "c21542f7-214b-4e55-8796-e0e5ee145acc",
+      "name": "spsbe2018-TST",
+      "zip": "solution/spsbe2018-TST.sppkg",
+      "cdn": "<!-- PATH TO CDN -->",
+      "entries": [
+        {
+          "id": "339aac7a-dbbd-4d90-956b-254e7885be8f",
+          "location": "./src/webparts/helloWorld/HelloWorldWebPart.manifest.json"
+        }
+      ]
+    },
+    {
+      "environment": "tst",
+      "id": "1c236f09-23e6-4222-8f20-d32c69367cb4",
+      "name": "spsbe2018-tst",
+      "zip": "solution/spsbe2018-tst.sppkg",
+      "cdn": "<!-- PATH TO CDN -->",
+      "entries": [
+        {
+          "id": "45b15355-b213-4950-9e5b-03c97ae58b41",
+          "location": "./src/webparts/helloWorld/HelloWorldWebPart.manifest.json"
+        }
+      ]
+    },
+    {
+      "environment": true,
+      "id": "d40c873d-5ff1-4d36-bb1b-88ea03216025",
+      "name": "spsbe2018-true",
+      "zip": "solution/spsbe2018-true.sppkg",
+      "cdn": "<!-- PATH TO CDN -->",
+      "entries": [
+        {
+          "id": "bb3b29c3-8774-4497-a8a1-0aac7cc2fb4b",
+          "location": "./src/webparts/helloWorld/HelloWorldWebPart.manifest.json"
+        }
+      ]
+    }
+  ]
+}

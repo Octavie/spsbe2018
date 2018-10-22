@@ -1,0 +1,279 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "departmentPrefix": {
+      "defaultValue": "MAV",
+      "type": "string",
+      "maxLength": 4,
+      "minLength": 2
+    },
+    "environment": {
+      "defaultValue": "DEV",
+      "allowedValues": [
+        "DEV",
+        "TST",
+        "ACC",
+        "PRD"
+      ],
+      "type": "string"
+    },
+    "locationPrimary": {
+      "defaultValue": "westeurope",
+      "type": "string"
+    },
+    "locationSecondary": {
+      "defaultValue": "northeurope",
+      "type": "string"
+    },
+    "regionPrimary": {
+      "defaultValue": "WE",
+      "type": "string",
+      "maxLength": 3,
+      "minLength": 2
+    },
+    "regionSecondary": {
+      "defaultValue": "NE",
+      "type": "string",
+      "maxLength": 3,
+      "minLength": 2
+    }
+  },
+  "variables": {
+    "servicePlanNamePrimary": "[toUpper(concat(parameters('departmentPrefix'), '-ASP-', 'SPAGEO-', parameters('environment'), '-', parameters('regionPrimary')))]",
+    "servicePlanNameSecondary": "[toUpper(concat(parameters('departmentPrefix'), '-ASP-', 'SPAGEO-', parameters('environment'), '-', parameters('regionSecondary')))]",
+    "webappNamePrimary": "[toUpper(concat(parameters('departmentPrefix'), '-WEB-', 'SPAGEO-', parameters('environment'), '-', parameters('regionPrimary')))]",
+    "webappNameSecondary": "[toUpper(concat(parameters('departmentPrefix'), '-WEB-', 'SPAGEO-', parameters('environment'), '-', parameters('regionSecondary')))]",
+    "trafficManagerName": "[toUpper(concat(parameters('departmentPrefix'), '-TM-', 'SPAGEO-', parameters('environment')))]"
+  },
+  "resources": [
+    {
+      "comments": "",
+      "type": "Microsoft.Network/trafficManagerProfiles",
+      "name": "[variables('trafficManagerName')]",
+      "apiVersion": "2017-05-01",
+      "location": "global",
+      "tags": {},
+      "scale": null,
+      "properties": {
+        "profileStatus": "Enabled",
+        "trafficRoutingMethod": "Priority",
+        "dnsConfig": {
+          "relativeName": "[tolower(concat('spageo-', parameters('environment')))]",
+          "fqdn": "[tolower(concat('spageo-', parameters('environment'), '.trafficmanager.net'))]",
+          "ttl": 30
+        },
+        "monitorConfig": {
+          "protocol": "HTTP",
+          "port": 80,
+          "path": "/",
+          "intervalInSeconds": 30,
+          "toleratedNumberOfFailures": 3,
+          "timeoutInSeconds": 10
+        },
+        "endpoints": [
+          {
+            "name": "[variables('webappNamePrimary')]",
+            "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
+            "properties": {
+              "endpointStatus": "Enabled",
+              "targetResourceId": "[resourceId('Microsoft.Web/sites', variables('webappNamePrimary'))]",
+              "target": "[toLower(concat(variables('webappNamePrimary'), '.azurewebsites.net'))]",
+              "weight": 1,
+              "priority": 1,
+              "endpointLocation": "[parameters('locationPrimary')]"
+            }
+          },
+          {
+            "name": "[variables('webappNameSecondary')]",
+            "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
+            "properties": {
+              "endpointStatus": "Enabled",
+              "targetResourceId": "[resourceId('Microsoft.Web/sites', variables('webappNameSecondary'))]",
+              "target": "[toLower(concat(variables('webappNameSecondary'), '.azurewebsites.net'))]",
+              "weight": 1,
+              "priority": 2,
+              "endpointLocation": "[parameters('locationSecondary')]"
+            }
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('webappNamePrimary'))]",
+        "[resourceId('Microsoft.Web/sites', variables('webappNameSecondary'))]"
+      ]
+    },
+    {
+      "comments": "",
+      "type": "Microsoft.Web/serverfarms",
+      "sku": {
+        "name": "S1",
+        "tier": "Standard",
+        "size": "S1",
+        "family": "S",
+        "capacity": 1
+      },
+      "kind": "app",
+      "name": "[variables('servicePlanNameSecondary')]",
+      "apiVersion": "2016-09-01",
+      "location": "[parameters('locationSecondary')]",
+      "scale": null,
+      "properties": {
+        "name": "[variables('servicePlanNameSecondary')]",
+        "workerTierName": null,
+        "adminSiteName": null,
+        "hostingEnvironmentProfile": null,
+        "perSiteScaling": false,
+        "reserved": false,
+        "targetWorkerCount": 0,
+        "targetWorkerSizeId": 0
+      },
+      "dependsOn": []
+    },
+    {
+      "comments": "",
+      "type": "Microsoft.Web/serverfarms",
+      "sku": {
+        "name": "S1",
+        "tier": "Standard",
+        "size": "S1",
+        "family": "S",
+        "capacity": 1
+      },
+      "kind": "app",
+      "name": "[variables('servicePlanNamePrimary')]",
+      "apiVersion": "2016-09-01",
+      "location": "[parameters('locationPrimary')]",
+      "scale": null,
+      "properties": {
+        "name": "[variables('servicePlanNamePrimary')]",
+        "workerTierName": null,
+        "adminSiteName": null,
+        "hostingEnvironmentProfile": null,
+        "perSiteScaling": false,
+        "reserved": false,
+        "targetWorkerCount": 0,
+        "targetWorkerSizeId": 0
+      },
+      "dependsOn": []
+    },
+    {
+      "comments": "",
+      "type": "Microsoft.Web/sites",
+      "kind": "app",
+      "name": "[variables('webappNameSecondary')]",
+      "apiVersion": "2016-08-01",
+      "location": "[parameters('locationSecondary')]",
+      "scale": null,
+      "properties": {
+        "enabled": true,
+        "hostNameSslStates": [
+          {
+            "name": "[concat(variables('webappNameSecondary'),variables('webappNameSecondary'),'.azurewebsites.net')]",
+            "sslState": "Disabled",
+            "virtualIP": null,
+            "thumbprint": null,
+            "toUpdate": null,
+            "hostType": "Standard"
+          },
+          {
+            "name": "[concat(variables('webappNameSecondary'),variables('webappNameSecondary'),'.scm.azurewebsites.net')]",
+            "sslState": "Disabled",
+            "virtualIP": null,
+            "thumbprint": null,
+            "toUpdate": null,
+            "hostType": "Repository"
+          },
+          {
+            "name": "spsbe2018spageo.trafficmanager.net",
+            "sslState": "Disabled",
+            "virtualIP": null,
+            "thumbprint": null,
+            "toUpdate": null,
+            "hostType": "Standard"
+          }
+        ],
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('servicePlanNameSecondary'))]",
+        "reserved": false,
+        "siteConfig": null,
+        "scmSiteAlsoStopped": false,
+        "hostingEnvironmentProfile": null,
+        "clientAffinityEnabled": true,
+        "clientCertEnabled": false,
+        "hostNamesDisabled": false,
+        "containerSize": 0,
+        "dailyMemoryTimeQuota": 0,
+        "cloningInfo": null
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('servicePlanNameSecondary'))]"
+      ]
+    },
+    {
+      "comments": "",
+      "type": "Microsoft.Web/sites",
+      "kind": "app",
+      "name": "[variables('webappNamePrimary')]",
+      "apiVersion": "2016-08-01",
+      "location": "[parameters('locationPrimary')]",
+      "scale": null,
+      "properties": {
+        "enabled": true,
+        "hostNameSslStates": [
+          {
+            "name": "spsbe2018spageo.trafficmanager.net",
+            "sslState": "Disabled",
+            "virtualIP": null,
+            "thumbprint": null,
+            "toUpdate": null,
+            "hostType": "Standard"
+          },
+          {
+            "name": "[concat(variables('webappNamePrimary'),variables('webappNamePrimary'),'.azurewebsites.net')]",
+            "sslState": "Disabled",
+            "virtualIP": null,
+            "thumbprint": null,
+            "toUpdate": null,
+            "hostType": "Standard"
+          },
+          {
+            "name": "[concat(variables('webappNamePrimary'),variables('webappNamePrimary'),'.scm.azurewebsites.net')]",
+            "sslState": "Disabled",
+            "virtualIP": null,
+            "thumbprint": null,
+            "toUpdate": null,
+            "hostType": "Repository"
+          }
+        ],
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('servicePlanNamePrimary'))]",
+        "reserved": false,
+        "siteConfig": null,
+        "scmSiteAlsoStopped": false,
+        "hostingEnvironmentProfile": null,
+        "clientAffinityEnabled": true,
+        "clientCertEnabled": false,
+        "hostNamesDisabled": false,
+        "containerSize": 0,
+        "dailyMemoryTimeQuota": 0,
+        "cloningInfo": null
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('servicePlanNamePrimary'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "trafficManagerURL": {
+      "type": "string",
+      "value": "[variables('trafficManagerName')]"
+    },
+    "webappNamePrimary": {
+      "type": "string",
+      "value": "[variables('webappNamePrimary')]"
+    },
+    "webappNameSecondary": {
+      "type": "string",
+      "value": "[variables('webappNameSecondary')]"
+    }
+  }
+}
