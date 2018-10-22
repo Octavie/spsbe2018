@@ -1,8 +1,8 @@
 ## SPSBE 2018 Demos
 PowerShell scripts:
-DEMO SPA ARM - Simple SPA sample based on ARM template deployment with Environment variable
-DEMO SPA GEO ARM - Simple Geo redundant SPA sample based on ARM template deployment with Environment variable
-DEMO SPFx Deployment - Simple SPFx package deployment and site provisioning with PNP PowerShell.
+- DEMO SPA ARM - Simple SPA sample based on ARM template deployment with Environment variable
+- DEMO SPA GEO ARM - Simple Geo redundant SPA sample based on ARM template deployment with Environment variable
+- DEMO SPFx Deployment - Simple SPFx package deployment and site provisioning with PNP PowerShell.
 
 ## SPFx source project
 Sample HelloWorld webpart
